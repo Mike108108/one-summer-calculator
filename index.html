@@ -681,7 +681,7 @@
   function priceForOcc(occ, nights, roomN, mealN, baseMeal, greenN, transfer, addons, pkg) {
     var mult = occ === "SGL" ? 1 : occ === "DBL" ? 0.5 : 1/3;
     var cost = roomN * nights * mult + mealN * nights + greenN * nights + transfer + addons;
-    var perNight = roomN * mult + baseMeal + greenN;
+    var perNight = roomN * mult + mealN + greenN;
     var profit = baselineProfit9(occ, roomN, baseMeal, greenN, transfer, pkg);
     if (nights > config.marginPolicy.baselineNights) {
       profit += (nights - config.marginPolicy.baselineNights) * perNight * config.marginPolicy.extraNightMarkupPct;
