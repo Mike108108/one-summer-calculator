@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ONE SUMMER — Калькулятор Мальдивы v4.4</title>
+  <title>ONE SUMMER — Калькулятор Мальдивы v5.0</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -186,24 +186,71 @@
 
     .page-title-row .page-title { margin-bottom: 0; }
 
-    .version-select {
+    .version-picker { position: relative; flex-shrink: 0; }
+    .version-picker summary {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       padding: 6px 12px;
       border-radius: 999px;
       border: 1px solid var(--color-primary-border);
       background: var(--color-primary-soft);
       color: var(--color-primary);
-      font-family: var(--font-body);
       font-size: 14px;
       font-weight: 500;
+      line-height: 1.5;
+      list-style: none;
       cursor: pointer;
+      user-select: none;
+      transition: background 0.15s, border-color 0.15s;
     }
-    .version-select:focus-visible {
+    .version-picker summary::-webkit-details-marker { display: none; }
+    .version-picker summary:hover,
+    .version-picker[open] summary { border-color: var(--color-primary); }
+    .version-picker summary:focus-visible,
+    .version-option:focus-visible {
       outline: 2px solid var(--color-primary);
       outline-offset: 3px;
     }
-    .version-select option {
+    .version-chevron { transition: transform 0.15s; }
+    .version-picker[open] .version-chevron { transform: rotate(180deg); }
+    .version-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      z-index: 50;
+      min-width: 164px;
+      padding: 6px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
       background: var(--color-surface);
-      color: var(--color-text);
+      box-shadow: var(--shadow-lg);
+    }
+    .version-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.5;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+    }
+    .version-option + .version-option { margin-top: 3px; }
+    .version-option:hover { background: var(--color-bg); color: var(--color-text); }
+    .version-option[aria-current="page"] {
+      color: var(--color-primary);
+      background: var(--color-primary-soft);
+    }
+    @media (max-width: 540px) {
+      .version-menu { left: auto; right: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .version-picker summary, .version-chevron, .version-option { transition: none; }
     }
 
     .page-sub {
@@ -228,7 +275,8 @@
       margin-bottom: 20px;
     }
 
-    .field { display: grid; gap: 5px; }
+    .field { display: grid; grid-template-rows: 18px 38px; align-content: start; gap: 5px; }
+    .field-heading { display: flex; align-items: center; gap: 8px; }
 
     .field-label {
       font-size: 11px;
@@ -240,6 +288,7 @@
 
     .tc-input {
       width: 100%;
+      height: 38px;
       padding: 10px 12px;
       border-radius: var(--radius-md);
       border: 1px solid var(--color-border);
@@ -283,7 +332,7 @@
 
     .tc-input-number { text-align: center; }
 
-    .field-hint { font-size: 10px; color: var(--color-text-faint); margin-top: 1px; }
+    .field-hint { font-size: 10px; color: var(--color-text-muted); white-space: nowrap; }
 
     /* ── BOTTOM GRID ── */
     .bottom-grid {
@@ -442,13 +491,16 @@
       <div class="page-badge">ONE SUMMER | Maldives</div>
       <div class="page-title-row">
         <h1 class="page-title">Калькулятор тура</h1>
-        <select id="calculator-version" class="version-select" aria-label="Версия калькулятора" onchange="if(this.value) window.location.href=this.value">
-          <option value="/" selected>v4.4</option>
-          <option value="/v4.3.html">v4.3</option>
-          <option value="/v4.2.html">v4.2</option>
-        </select>
+        <details class="version-picker">
+          <summary aria-label="Версия калькулятора, текущая v5.0"><span>v5.0</span><svg class="version-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+          <nav class="version-menu" aria-label="Версии калькулятора">
+            <a class="version-option" href="/" aria-current="page"><span>v5.0</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></a>
+            <a class="version-option" href="/v4.3.html"><span>v4.3</span></a>
+            <a class="version-option" href="/v4.2.html"><span>v4.2</span></a>
+          </nav>
+        </details>
       </div>
-      <p class="page-sub">Калькулятор действует с 1.05.2026 · Выберите параметры проживания и дополнительные услуги</p>
+      <p class="page-sub">Калькулятор действует с 1.05.2027 · Выберите параметры проживания и дополнительные услуги</p>
     </div>
 
     <!-- PARAMS -->
@@ -464,9 +516,11 @@
       </div>
 
       <div class="field">
-        <label class="field-label" for="tc-season">Сезон</label>
+        <div class="field-heading">
+          <label class="field-label" for="tc-season">Сезон</label>
+          <span id="tc-season-months" class="field-hint"></span>
+        </div>
         <select id="tc-season" class="tc-input"></select>
-        <div id="tc-season-months" class="field-hint"></div>
       </div>
 
       <div class="field">
@@ -532,6 +586,37 @@
 </div>
 
 <script>
+// ── VERSION PICKER ──
+(function () {
+  var picker = document.querySelector('.version-picker');
+  if (!picker) return;
+  var summary = picker.querySelector('summary');
+  var options = picker.querySelectorAll('.version-option');
+  document.addEventListener('click', function (event) {
+    if (!picker.contains(event.target)) picker.open = false;
+  });
+  document.addEventListener('focusin', function (event) {
+    if (!picker.contains(event.target)) picker.open = false;
+  });
+  picker.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && picker.open) {
+      event.preventDefault();
+      picker.open = false;
+      summary.focus();
+      return;
+    }
+    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp' && event.key !== 'Home' && event.key !== 'End') return;
+    event.preventDefault();
+    picker.open = true;
+    var index = Array.prototype.indexOf.call(options, document.activeElement);
+    if (event.key === 'Home') index = 0;
+    else if (event.key === 'End') index = options.length - 1;
+    else if (event.key === 'ArrowDown') index = (index + 1) % options.length;
+    else index = index < 0 ? options.length - 1 : (index - 1 + options.length) % options.length;
+    options[index].focus();
+  });
+})();
+
 // ── THEME TOGGLE ──
 (function(){
   var r = document.documentElement;
@@ -740,7 +825,7 @@
     if (priceChild211) priceChild211.textContent = fmt(Math.round(roomN * nights * 0.5 + mealN * nights + greenN * nights + transfer + addC));
 
     var s = config.seasons[seasonKey];
-    if (seasonMonths && s) seasonMonths.textContent = "Месяцы: " + s.months.join(", ");
+    if (seasonMonths && s) seasonMonths.textContent = s.months.join(", ");
   }
 
   nightsInput.addEventListener("input", compute);
