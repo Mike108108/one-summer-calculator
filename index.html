@@ -363,6 +363,7 @@
       cursor: pointer;
       transition: background 0.13s, border-color 0.13s, box-shadow 0.13s;
     }
+    .addon-row[hidden] { display: none; }
     .addon-row:hover {
       background: var(--color-surface);
       border-color: var(--color-primary-border);
@@ -660,7 +661,7 @@
       { id: "sand",        label: "Пикник на острове",     price: 90 },
       { id: "dolphin",     label: "Прогулка с дельфинами", price: 70 },
       { id: "snorkel",     label: "Снорклинг сафари",      price: 70 },
-      { id: "manta",       label: "Полёты с мантами",      price: 120 },
+      { id: "manta",       label: "Полёты с мантами",      price: 120, seasons: ["low"] },
       { id: "night",       label: "Мальдивская ночь",      price: 70 },
       { id: "ceremony",    label: "Церемония открытия",    price: 50 }
     ],
@@ -759,11 +760,26 @@
     addonCheckboxes[a.id] = cb;
   }
 
+  function updateAddonAvailability(seasonKey) {
+    for (var i = 0; i < config.addons.length; i++) {
+      var addon = config.addons[i];
+      var checkbox = addonCheckboxes[addon.id];
+      var row = checkbox.closest('.addon-row');
+      var available = !addon.seasons || addon.seasons.indexOf(seasonKey) !== -1;
+      row.hidden = !available;
+      checkbox.disabled = !available;
+      if (!available) {
+        checkbox.checked = false;
+        row.classList.remove('checked');
+      }
+    }
+  }
+
   function addonCostFor(isChild211, nights) {
     var sum = 0;
     for (var id in addonCheckboxes) {
       if (!addonCheckboxes.hasOwnProperty(id)) continue;
-      if (!addonCheckboxes[id].checked) continue;
+      if (!addonCheckboxes[id].checked || addonCheckboxes[id].disabled) continue;
       var cfg = null;
       for (var z = 0; z < config.addons.length; z++) {
         if (config.addons[z].id === id) { cfg = config.addons[z]; break; }
@@ -806,6 +822,7 @@
     var raw = (nightsInput.value || "").trim();
     var nights = clampNights(parseInt(raw, 10) || 1);
     var seasonKey  = seasonSelect.value;
+    updateAddonAvailability(seasonKey);
     var catId      = categorySelect.value;
     var mealKey    = mealSelect.value;
     var mealN      = config.meal[mealKey] || 0;
