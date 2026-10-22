@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ONE SUMMER — Калькулятор Мальдивы v5.0</title>
+  <title>ONE SUMMER — Калькулятор Мальдивы v5.1</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -493,9 +493,10 @@
       <div class="page-title-row">
         <h1 class="page-title">Калькулятор тура</h1>
         <details class="version-picker">
-          <summary aria-label="Версия калькулятора, текущая v5.0"><span>v5.0</span><svg class="version-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+          <summary aria-label="Версия калькулятора, текущая v5.1"><span>v5.1</span><svg class="version-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
           <nav class="version-menu" aria-label="Версии калькулятора">
-            <a class="version-option" href="/" aria-current="page"><span>v5.0</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></a>
+            <a class="version-option" href="/" aria-current="page"><span>v5.1</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></a>
+            <a class="version-option" href="/v5.0.html"><span>v5.0</span></a>
             <a class="version-option" href="/v4.3.html"><span>v4.3</span></a>
             <a class="version-option" href="/v4.2.html"><span>v4.2</span></a>
           </nav>
@@ -560,10 +561,6 @@
           </div>
           <div id="tc-price-dbl" class="price-row price-row-main">
             <div class="price-label-strong">DBL</div>
-            <div class="price-value">—</div>
-          </div>
-          <div id="tc-price-tpl" class="price-row price-row-main">
-            <div class="price-label-strong">TPL</div>
             <div class="price-value">—</div>
           </div>
           <div class="price-divider"></div>
@@ -669,8 +666,7 @@
     roomCosts: {
       comfort: { low: 45, mid: 55, high: 65 },
       bdel:    { all: 80 }
-    },
-    tplPolicy: { profitBonusPct: 0.1 }
+    }
   };
 
   var mealLabels = { BB: "Только завтрак", BBD: "Завтрак + ужин" };
@@ -693,7 +689,6 @@
   function q(id, sel) { var el = document.getElementById(id); return el ? el.querySelector(sel) : null; }
   var priceSGL    = q("tc-price-sgl",    ".price-value");
   var priceDBL    = q("tc-price-dbl",    ".price-value");
-  var priceTPL    = q("tc-price-tpl",    ".price-value");
   var priceChild02  = q("tc-price-child02",  ".price-value-soft");
   var priceChild211 = q("tc-price-child211", ".price-value-soft");
 
@@ -793,13 +788,6 @@
   }
 
   function baselineProfit9(occ, roomN, baseMeal, greenN, transfer, pkg) {
-    if (occ === "TPL") {
-      var dblR = (pkg.DBL || {}).retail || 0;
-      if (!dblR) return 0;
-      var cost9DBL = roomN * 9 * 0.5 + baseMeal * 9 + greenN * 9 + transfer;
-      var p = Math.max(0, dblR - cost9DBL) * 2;
-      return p * (1 + config.tplPolicy.profitBonusPct) / 3;
-    }
     var mult = occ === "DBL" ? 0.5 : 1;
     var occCfg = pkg[occ]; if (!occCfg) return 0;
     var r9 = occCfg.retail || 0;
@@ -808,7 +796,7 @@
   }
 
   function priceForOcc(occ, nights, roomN, mealN, baseMeal, greenN, transfer, addons, pkg) {
-    var mult = occ === "SGL" ? 1 : occ === "DBL" ? 0.5 : 1/3;
+    var mult = occ === "DBL" ? 0.5 : 1;
     var cost = roomN * nights * mult + mealN * nights + greenN * nights + transfer + addons;
     var perNight = roomN * mult + mealN + greenN;
     var profit = baselineProfit9(occ, roomN, baseMeal, greenN, transfer, pkg);
@@ -837,7 +825,6 @@
 
     if (priceSGL) priceSGL.textContent    = fmt(priceForOcc("SGL", nights, roomN, mealN, baseMeal, greenN, transfer, addA, pkg));
     if (priceDBL) priceDBL.textContent    = fmt(priceForOcc("DBL", nights, roomN, mealN, baseMeal, greenN, transfer, addA, pkg));
-    if (priceTPL) priceTPL.textContent    = fmt(priceForOcc("TPL", nights, roomN, mealN, baseMeal, greenN, transfer, addA, pkg));
     if (priceChild02)  priceChild02.textContent  = fmt(Math.round(greenN * nights));
     if (priceChild211) priceChild211.textContent = fmt(Math.round(roomN * nights * 0.5 + mealN * nights + greenN * nights + transfer + addC));
 
